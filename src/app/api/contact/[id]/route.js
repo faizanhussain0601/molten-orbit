@@ -1,0 +1,17 @@
+import { NextResponse } from 'next/server';
+import dbConnect from '@/lib/mongodb';
+import Contact from '@/models/Contact';
+
+export async function DELETE(req, { params }) {
+    await dbConnect();
+    try {
+        const { id } = await params;
+        const deletedContact = await Contact.deleteOne({ _id: id });
+        if (!deletedContact) {
+            return NextResponse.json({ success: false, error: 'Contact not found' }, { status: 404 });
+        }
+        return NextResponse.json({ success: true, data: {} });
+    } catch (error) {
+        return NextResponse.json({ success: false, error: error.message }, { status: 400 });
+    }
+}
